@@ -1,0 +1,13 @@
+{
+  "name": "WL Example App",
+  "description": "",
+  "keywords": [
+    "contentful",
+    "gatsby",
+    "static",
+    "ssg"
+  ],
+  "repository": "",
+  "success_url": "/",
+  "buildpacks": []
+}
