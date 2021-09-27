@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface ContainerProps {
-  as?: string | React.ComponentType;
+  as?: (keyof JSX.IntrinsicElements) | React.ComponentType;
 }
 
 const Container: React.FC<ContainerProps> = ({ children, as = 'div' }) => {

@@ -4,20 +4,6 @@ schema {
     query: Query
 }
 
-interface ContentfulEntry {
-    children: [Node!]!
-    contentful_id: String!
-    id: ID!
-    internal: Internal!
-    node_locale: String!
-    parent: Node
-}
-
-interface ContentfulReference {
-    contentful_id: String!
-    id: ID!
-}
-
 "Node Interface"
 interface Node {
     children: [Node!]!
@@ -28,9 +14,9 @@ interface Node {
 
 union ContentfulWlHeroContentfulWlTextUnion = ContentfulWlHero | ContentfulWlText
 
-type ContentfulAsset implements ContentfulReference & Node {
+type ContentfulAsset implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -43,132 +29,15 @@ type ContentfulAsset implements ContentfulReference & Node {
     ): Date
     description: String
     file: ContentfulAssetFile
-    fixed(
-        background: String,
-        """
-
-        Desired corner radius in pixels. Results in an image with rounded corners.
-        Pass `-1` for a full circle/ellipse.
-        """
-        cornerRadius: Int = 0,
-        cropFocus: ContentfulImageCropFocus,
-        height: Int,
-        quality: Int = 50,
-        resizingBehavior: ImageResizingBehavior,
-        toFormat: ContentfulImageFormat = AUTO,
-        width: Int
-    ): ContentfulFixed
-    fluid(
-        background: String,
-        """
-
-        Desired corner radius in pixels. Results in an image with rounded corners.
-        Pass `-1` for a full circle/ellipse.
-        """
-        cornerRadius: Int = 0,
-        cropFocus: ContentfulImageCropFocus,
-        maxHeight: Int,
-        maxWidth: Int,
-        quality: Int = 50,
-        resizingBehavior: ImageResizingBehavior,
-        sizes: String,
-        toFormat: ContentfulImageFormat = AUTO
-    ): ContentfulFluid
-    gatsbyImageData(
-        """
-
-        If set along with width or height, this will set the value of the other dimension to match the provided aspect ratio, cropping the image if needed.
-        If neither width or height is provided, height will be set based on the intrinsic width of the source image.
-        """
-        aspectRatio: Float,
-        "Background color applied to the wrapper, or when \"letterboxing\" an image to another aspect ratio."
-        backgroundColor: String,
-        """
-
-        Specifies the image widths to generate. You should rarely need to change this. For FIXED and CONSTRAINED images it is better to allow these to be determined automatically,
-        based on the image size. For FULL_WIDTH images this can be used to override the default, which is [750, 1080, 1366, 1920].
-        It will never generate any images larger than the source.
-        """
-        breakpoints: [Int],
-        """
-
-        Desired corner radius in pixels. Results in an image with rounded corners.
-        Pass `-1` for a full circle/ellipse.
-        """
-        cornerRadius: Int = 0,
-        cropFocus: ContentfulImageCropFocus,
-        """
-
-        The image formats to generate. Valid values are AUTO (meaning the same format as the source image), JPG, PNG, and WEBP.
-        The default value is [AUTO, WEBP], and you should rarely need to change this. Take care if you specify JPG or PNG when you do
-        not know the formats of the source images, as this could lead to unwanted results such as converting JPEGs to PNGs. Specifying
-        both PNG and JPG is not supported and will be ignored.
-        """
-        formats: [ContentfulImageFormat] = [AUTO, WEBP],
-        "If set, the height of the generated image. If omitted, it is calculated from the supplied width, matching the aspect ratio of the source image."
-        height: Int,
-        jpegProgressive: Boolean = true,
-        """
-
-        The layout for the image.
-        CONSTRAINED: Resizes to fit its container, up to a maximum width, at which point it will remain fixed in size.
-        FIXED: A static image size, that does not resize according to the screen width
-        FULL_WIDTH: The image resizes to fit its container, even if that is larger than the source image.
-        Pass a value to "sizes" if the container is not the full width of the screen.
-        """
-        layout: ContentfulImageLayout = CONSTRAINED,
-        """
-
-        A list of image pixel densities to generate for FIXED and CONSTRAINED images. You should rarely need to change this. It will never generate images larger than the source, and will always include a 1x image.
-        Default is [ 1, 2 ] for fixed images, meaning 1x, 2x, 3x, and [0.25, 0.5, 1, 2] for fluid. In this case, an image with a fluid layout and width = 400 would generate images at 100, 200, 400 and 800px wide.
-        """
-        outputPixelDensities: [Float],
-        """
-
-        Format of generated placeholder image, displayed while the main image loads.
-        BLURRED: a blurred, low resolution image, encoded as a base64 data URI (default)
-        DOMINANT_COLOR: a solid color, calculated from the dominant color of the image.
-        TRACED_SVG: a low-resolution traced SVG of the image.
-        NONE: no placeholder. Set the argument "backgroundColor" to use a fixed background color.
-        """
-        placeholder: ContentfulImagePlaceholder = DOMINANT_COLOR,
-        quality: Int = 50,
-        resizingBehavior: ImageResizingBehavior,
-        """
-
-        The "sizes" property, passed to the img tag. This describes the display size of the image.
-        This does not affect the generated images, but is used by the browser to decide which images to download. You can leave this blank for fixed images, or if the responsive image
-        container will be the full width of the screen. In these cases we will generate an appropriate value.
-        """
-        sizes: String,
-        """
-
-        The display width of the generated image for layout = FIXED, and the display width of the largest image for layout = CONSTRAINED.
-        The actual largest image resolution will be this value multiplied by the largest value in outputPixelDensities
-        Ignored if layout = FLUID.
-        """
-        width: Int
-    ): JSON
+    fixed(background: String, cropFocus: ContentfulImageCropFocus, height: Int, quality: Int = 50, resizingBehavior: ImageResizingBehavior, toFormat: ContentfulImageFormat = NO_CHANGE, width: Int): ContentfulFixed
+    fluid(background: String, cropFocus: ContentfulImageCropFocus, maxHeight: Int, maxWidth: Int, quality: Int = 50, resizingBehavior: ImageResizingBehavior, sizes: String, toFormat: ContentfulImageFormat = NO_CHANGE): ContentfulFluid
     id: ID!
     internal: Internal!
     node_locale: String
     parent: Node
-    resize(
-        background: String,
-        """
-
-        Desired corner radius in pixels. Results in an image with rounded corners.
-        Pass `-1` for a full circle/ellipse.
-        """
-        cornerRadius: Int = 0,
-        cropFocus: ContentfulImageCropFocus,
-        height: Int,
-        jpegProgressive: Boolean = true,
-        quality: Int = 50,
-        resizingBehavior: ImageResizingBehavior,
-        toFormat: ContentfulImageFormat = AUTO,
-        width: Int
-    ): ContentfulResize
+    resize(background: String, cropFocus: ContentfulImageCropFocus, height: Int, jpegProgressive: Boolean = true, quality: Int = 50, resizingBehavior: ImageResizingBehavior, toFormat: ContentfulImageFormat = NO_CHANGE, width: Int): ContentfulResize
+    resolutions(background: String, cropFocus: ContentfulImageCropFocus, height: Int, quality: Int = 50, resizingBehavior: ImageResizingBehavior, toFormat: ContentfulImageFormat = NO_CHANGE, width: Int): ContentfulResolutions @deprecated(reason : "Resolutions was deprecated in Gatsby v2. It's been renamed to \"fixed\" https://example.com/write-docs-and-fix-this-example-link")
+    sizes(background: String, cropFocus: ContentfulImageCropFocus, maxHeight: Int, maxWidth: Int, quality: Int = 50, resizingBehavior: ImageResizingBehavior, sizes: String, toFormat: ContentfulImageFormat = NO_CHANGE): ContentfulSizes @deprecated(reason : "Sizes was deprecated in Gatsby v2. It's been renamed to \"fluid\" https://example.com/write-docs-and-fix-this-example-link")
     spaceId: String
     sys: ContentfulAssetSys
     title: String
@@ -220,11 +89,16 @@ type ContentfulAssetFileDetailsImage {
 }
 
 type ContentfulAssetGroupConnection {
+    distinct(field: ContentfulAssetFieldsEnum!): [String!]!
     edges: [ContentfulAssetEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulAssetFieldsEnum!, limit: Int, skip: Int): [ContentfulAssetGroupConnection!]!
+    max(field: ContentfulAssetFieldsEnum!): Float
+    min(field: ContentfulAssetFieldsEnum!): Float
     nodes: [ContentfulAsset!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulAssetFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -233,7 +107,7 @@ type ContentfulAssetSys {
     type: String
 }
 
-type ContentfulBlogPost implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulBlogPost implements Node {
     author: ContentfulPerson
     body: contentfulBlogPostBodyTextNode
     "Returns the first child node of type contentfulBlogPostBodyTextNode or null if there are no children of given type on this node"
@@ -245,7 +119,7 @@ type ContentfulBlogPost implements ContentfulEntry & ContentfulReference & Node 
     childrenContentfulBlogPostBodyTextNode: [contentfulBlogPostBodyTextNode]
     "Returns all children nodes filtered by type contentfulBlogPostDescriptionTextNode"
     childrenContentfulBlogPostDescriptionTextNode: [contentfulBlogPostDescriptionTextNode]
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -260,7 +134,7 @@ type ContentfulBlogPost implements ContentfulEntry & ContentfulReference & Node 
     heroImage: ContentfulAsset
     id: ID!
     internal: Internal!
-    node_locale: String!
+    node_locale: String
     parent: Node
     publishDate(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
@@ -308,11 +182,16 @@ type ContentfulBlogPostEdge {
 }
 
 type ContentfulBlogPostGroupConnection {
+    distinct(field: ContentfulBlogPostFieldsEnum!): [String!]!
     edges: [ContentfulBlogPostEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulBlogPostFieldsEnum!, limit: Int, skip: Int): [ContentfulBlogPostGroupConnection!]!
+    max(field: ContentfulBlogPostFieldsEnum!): Float
+    min(field: ContentfulBlogPostFieldsEnum!): Float
     nodes: [ContentfulBlogPost!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulBlogPostFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -362,43 +241,21 @@ type ContentfulContentTypeEdge {
 }
 
 type ContentfulContentTypeGroupConnection {
+    distinct(field: ContentfulContentTypeFieldsEnum!): [String!]!
     edges: [ContentfulContentTypeEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulContentTypeFieldsEnum!, limit: Int, skip: Int): [ContentfulContentTypeGroupConnection!]!
+    max(field: ContentfulContentTypeFieldsEnum!): Float
+    min(field: ContentfulContentTypeFieldsEnum!): Float
     nodes: [ContentfulContentType!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulContentTypeFieldsEnum!): Float
     totalCount: Int!
 }
 
 type ContentfulContentTypeSys {
     type: String
-}
-
-type ContentfulEntryConnection {
-    distinct(field: ContentfulEntryFieldsEnum!): [String!]!
-    edges: [ContentfulEntryEdge!]!
-    group(field: ContentfulEntryFieldsEnum!, limit: Int, skip: Int): [ContentfulEntryGroupConnection!]!
-    max(field: ContentfulEntryFieldsEnum!): Float
-    min(field: ContentfulEntryFieldsEnum!): Float
-    nodes: [ContentfulEntry!]!
-    pageInfo: PageInfo!
-    sum(field: ContentfulEntryFieldsEnum!): Float
-    totalCount: Int!
-}
-
-type ContentfulEntryEdge {
-    next: ContentfulEntry
-    node: ContentfulEntry!
-    previous: ContentfulEntry
-}
-
-type ContentfulEntryGroupConnection {
-    edges: [ContentfulEntryEdge!]!
-    field: String!
-    fieldValue: String
-    nodes: [ContentfulEntry!]!
-    pageInfo: PageInfo!
-    totalCount: Int!
 }
 
 type ContentfulFixed {
@@ -424,7 +281,7 @@ type ContentfulFluid {
     tracedSVG: String
 }
 
-type ContentfulPerson implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulPerson implements Node {
     blog_post: [ContentfulBlogPost]
     "Returns the first child node of type contentfulPersonShortBioTextNode or null if there are no children of given type on this node"
     childContentfulPersonShortBioTextNode: contentfulPersonShortBioTextNode
@@ -432,7 +289,7 @@ type ContentfulPerson implements ContentfulEntry & ContentfulReference & Node {
     "Returns all children nodes filtered by type contentfulPersonShortBioTextNode"
     childrenContentfulPersonShortBioTextNode: [contentfulPersonShortBioTextNode]
     company: String
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -450,7 +307,7 @@ type ContentfulPerson implements ContentfulEntry & ContentfulReference & Node {
     image: ContentfulAsset
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     phone: String
     shortBio: contentfulPersonShortBioTextNode
@@ -489,11 +346,16 @@ type ContentfulPersonEdge {
 }
 
 type ContentfulPersonGroupConnection {
+    distinct(field: ContentfulPersonFieldsEnum!): [String!]!
     edges: [ContentfulPersonEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulPersonFieldsEnum!, limit: Int, skip: Int): [ContentfulPersonGroupConnection!]!
+    max(field: ContentfulPersonFieldsEnum!): Float
+    min(field: ContentfulPersonFieldsEnum!): Float
     nodes: [ContentfulPerson!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulPersonFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -522,9 +384,32 @@ type ContentfulResize {
     width: Int
 }
 
-type ContentfulWlBox implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulResolutions {
+    aspectRatio: Float
+    base64: String
+    height: Float!
+    src: String!
+    srcSet: String!
+    srcSetWebp: String
+    srcWebp: String
+    tracedSVG: String
+    width: Float!
+}
+
+type ContentfulSizes {
+    aspectRatio: Float!
+    base64: String
+    sizes: String!
+    src: String!
+    srcSet: String!
+    srcSetWebp: String
+    srcWebp: String
+    tracedSVG: String
+}
+
+type ContentfulWlBox implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -538,7 +423,7 @@ type ContentfulWlBox implements ContentfulEntry & ContentfulReference & Node {
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     outline: Boolean
     parent: Node
     segments: [ContentfulWlText]
@@ -576,11 +461,16 @@ type ContentfulWlBoxEdge {
 }
 
 type ContentfulWlBoxGroupConnection {
+    distinct(field: ContentfulWlBoxFieldsEnum!): [String!]!
     edges: [ContentfulWlBoxEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlBoxFieldsEnum!, limit: Int, skip: Int): [ContentfulWlBoxGroupConnection!]!
+    max(field: ContentfulWlBoxFieldsEnum!): Float
+    min(field: ContentfulWlBoxFieldsEnum!): Float
     nodes: [ContentfulWlBox!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlBoxFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -600,45 +490,9 @@ type ContentfulWlBoxSysContentTypeSys {
     type: String
 }
 
-type ContentfulWlButton implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlHero implements Node {
     children: [Node!]!
-    contentful_id: String!
-    id: ID!
-    internal: Internal!
-    node_locale: String!
-    parent: Node
-}
-
-type ContentfulWlButtonConnection {
-    distinct(field: ContentfulWlButtonFieldsEnum!): [String!]!
-    edges: [ContentfulWlButtonEdge!]!
-    group(field: ContentfulWlButtonFieldsEnum!, limit: Int, skip: Int): [ContentfulWlButtonGroupConnection!]!
-    max(field: ContentfulWlButtonFieldsEnum!): Float
-    min(field: ContentfulWlButtonFieldsEnum!): Float
-    nodes: [ContentfulWlButton!]!
-    pageInfo: PageInfo!
-    sum(field: ContentfulWlButtonFieldsEnum!): Float
-    totalCount: Int!
-}
-
-type ContentfulWlButtonEdge {
-    next: ContentfulWlButton
-    node: ContentfulWlButton!
-    previous: ContentfulWlButton
-}
-
-type ContentfulWlButtonGroupConnection {
-    edges: [ContentfulWlButtonEdge!]!
-    field: String!
-    fieldValue: String
-    nodes: [ContentfulWlButton!]!
-    pageInfo: PageInfo!
-    totalCount: Int!
-}
-
-type ContentfulWlHero implements ContentfulEntry & ContentfulReference & Node {
-    children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -652,7 +506,7 @@ type ContentfulWlHero implements ContentfulEntry & ContentfulReference & Node {
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     overlay: ContentfulWlBox
     parent: Node
     spaceId: String
@@ -689,11 +543,16 @@ type ContentfulWlHeroEdge {
 }
 
 type ContentfulWlHeroGroupConnection {
+    distinct(field: ContentfulWlHeroFieldsEnum!): [String!]!
     edges: [ContentfulWlHeroEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlHeroFieldsEnum!, limit: Int, skip: Int): [ContentfulWlHeroGroupConnection!]!
+    max(field: ContentfulWlHeroFieldsEnum!): Float
+    min(field: ContentfulWlHeroFieldsEnum!): Float
     nodes: [ContentfulWlHero!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlHeroFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -713,9 +572,9 @@ type ContentfulWlHeroSysContentTypeSys {
     type: String
 }
 
-type ContentfulWlMenu implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlMenu implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -729,7 +588,7 @@ type ContentfulWlMenu implements ContentfulEntry & ContentfulReference & Node {
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     spaceId: String
     submenus: [ContentfulWlSubMenu]
@@ -765,17 +624,22 @@ type ContentfulWlMenuEdge {
 }
 
 type ContentfulWlMenuGroupConnection {
+    distinct(field: ContentfulWlMenuFieldsEnum!): [String!]!
     edges: [ContentfulWlMenuEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlMenuFieldsEnum!, limit: Int, skip: Int): [ContentfulWlMenuGroupConnection!]!
+    max(field: ContentfulWlMenuFieldsEnum!): Float
+    min(field: ContentfulWlMenuFieldsEnum!): Float
     nodes: [ContentfulWlMenu!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlMenuFieldsEnum!): Float
     totalCount: Int!
 }
 
-type ContentfulWlMenuLink implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlMenuLink implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -791,7 +655,7 @@ type ContentfulWlMenuLink implements ContentfulEntry & ContentfulReference & Nod
     internal: Internal!
     link: ContentfulWlPage
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     spaceId: String
     sys: ContentfulWlMenuLinkSys
@@ -827,11 +691,16 @@ type ContentfulWlMenuLinkEdge {
 }
 
 type ContentfulWlMenuLinkGroupConnection {
+    distinct(field: ContentfulWlMenuLinkFieldsEnum!): [String!]!
     edges: [ContentfulWlMenuLinkEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlMenuLinkFieldsEnum!, limit: Int, skip: Int): [ContentfulWlMenuLinkGroupConnection!]!
+    max(field: ContentfulWlMenuLinkFieldsEnum!): Float
+    min(field: ContentfulWlMenuLinkFieldsEnum!): Float
     nodes: [ContentfulWlMenuLink!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlMenuLinkFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -867,9 +736,9 @@ type ContentfulWlMenuSysContentTypeSys {
     type: String
 }
 
-type ContentfulWlPage implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlPage implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -884,7 +753,7 @@ type ContentfulWlPage implements ContentfulEntry & ContentfulReference & Node {
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     segments: [ContentfulWlHeroContentfulWlTextUnion]
     slug: String
@@ -923,11 +792,16 @@ type ContentfulWlPageEdge {
 }
 
 type ContentfulWlPageGroupConnection {
+    distinct(field: ContentfulWlPageFieldsEnum!): [String!]!
     edges: [ContentfulWlPageEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlPageFieldsEnum!, limit: Int, skip: Int): [ContentfulWlPageGroupConnection!]!
+    max(field: ContentfulWlPageFieldsEnum!): Float
+    min(field: ContentfulWlPageFieldsEnum!): Float
     nodes: [ContentfulWlPage!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlPageFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -947,9 +821,9 @@ type ContentfulWlPageSysContentTypeSys {
     type: String
 }
 
-type ContentfulWlSubMenu implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlSubMenu implements Node {
     children: [Node!]!
-    contentful_id: String!
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -964,7 +838,7 @@ type ContentfulWlSubMenu implements ContentfulEntry & ContentfulReference & Node
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     spaceId: String
     sys: ContentfulWlSubMenuSys
@@ -1000,11 +874,16 @@ type ContentfulWlSubMenuEdge {
 }
 
 type ContentfulWlSubMenuGroupConnection {
+    distinct(field: ContentfulWlSubMenuFieldsEnum!): [String!]!
     edges: [ContentfulWlSubMenuEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlSubMenuFieldsEnum!, limit: Int, skip: Int): [ContentfulWlSubMenuGroupConnection!]!
+    max(field: ContentfulWlSubMenuFieldsEnum!): Float
+    min(field: ContentfulWlSubMenuFieldsEnum!): Float
     nodes: [ContentfulWlSubMenu!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlSubMenuFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1024,10 +903,14 @@ type ContentfulWlSubMenuSysContentTypeSys {
     type: String
 }
 
-type ContentfulWlText implements ContentfulEntry & ContentfulReference & Node {
+type ContentfulWlText implements Node {
+    "Returns the first child node of type contentfulWlTextContentRichTextNode or null if there are no children of given type on this node"
+    childContentfulWlTextContentRichTextNode: contentfulWlTextContentRichTextNode
     children: [Node!]!
-    content: ContentfulWlTextContent
-    contentful_id: String!
+    "Returns all children nodes filtered by type contentfulWlTextContentRichTextNode"
+    childrenContentfulWlTextContentRichTextNode: [contentfulWlTextContentRichTextNode]
+    content: contentfulWlTextContentRichTextNode
+    contentful_id: String
     createdAt(
         "Returns the difference between this date and the current time. Defaults to \"milliseconds\" but you can also pass in as the measurement \"years\", \"months\", \"weeks\", \"days\", \"hours\", \"minutes\", and \"seconds\"."
         difference: String,
@@ -1041,7 +924,7 @@ type ContentfulWlText implements ContentfulEntry & ContentfulReference & Node {
     id: ID!
     internal: Internal!
     name: String
-    node_locale: String!
+    node_locale: String
     parent: Node
     spaceId: String
     sys: ContentfulWlTextSys
@@ -1071,10 +954,6 @@ type ContentfulWlTextConnection {
     totalCount: Int!
 }
 
-type ContentfulWlTextContent {
-    raw: String
-}
-
 type ContentfulWlTextEdge {
     next: ContentfulWlText
     node: ContentfulWlText!
@@ -1082,11 +961,16 @@ type ContentfulWlTextEdge {
 }
 
 type ContentfulWlTextGroupConnection {
+    distinct(field: ContentfulWlTextFieldsEnum!): [String!]!
     edges: [ContentfulWlTextEdge!]!
     field: String!
     fieldValue: String
+    group(field: ContentfulWlTextFieldsEnum!, limit: Int, skip: Int): [ContentfulWlTextGroupConnection!]!
+    max(field: ContentfulWlTextFieldsEnum!): Float
+    min(field: ContentfulWlTextFieldsEnum!): Float
     nodes: [ContentfulWlText!]!
     pageInfo: PageInfo!
+    sum(field: ContentfulWlTextFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1226,11 +1110,16 @@ type DirectoryEdge {
 }
 
 type DirectoryGroupConnection {
+    distinct(field: DirectoryFieldsEnum!): [String!]!
     edges: [DirectoryEdge!]!
     field: String!
     fieldValue: String
+    group(field: DirectoryFieldsEnum!, limit: Int, skip: Int): [DirectoryGroupConnection!]!
+    max(field: DirectoryFieldsEnum!): Float
+    min(field: DirectoryFieldsEnum!): Float
     nodes: [Directory!]!
     pageInfo: PageInfo!
+    sum(field: DirectoryFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1358,11 +1247,16 @@ type FileEdge {
 }
 
 type FileGroupConnection {
+    distinct(field: FileFieldsEnum!): [String!]!
     edges: [FileEdge!]!
     field: String!
     fieldValue: String
+    group(field: FileFieldsEnum!, limit: Int, skip: Int): [FileGroupConnection!]!
+    max(field: FileFieldsEnum!): Float
+    min(field: FileFieldsEnum!): Float
     nodes: [File!]!
     pageInfo: PageInfo!
+    sum(field: FileFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1533,11 +1427,16 @@ type ImageSharpFluid {
 }
 
 type ImageSharpGroupConnection {
+    distinct(field: ImageSharpFieldsEnum!): [String!]!
     edges: [ImageSharpEdge!]!
     field: String!
     fieldValue: String
+    group(field: ImageSharpFieldsEnum!, limit: Int, skip: Int): [ImageSharpGroupConnection!]!
+    max(field: ImageSharpFieldsEnum!): Float
+    min(field: ImageSharpFieldsEnum!): Float
     nodes: [ImageSharp!]!
     pageInfo: PageInfo!
+    sum(field: ImageSharpFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1613,11 +1512,16 @@ type MarkdownRemarkFrontmatter {
 }
 
 type MarkdownRemarkGroupConnection {
+    distinct(field: MarkdownRemarkFieldsEnum!): [String!]!
     edges: [MarkdownRemarkEdge!]!
     field: String!
     fieldValue: String
+    group(field: MarkdownRemarkFieldsEnum!, limit: Int, skip: Int): [MarkdownRemarkGroupConnection!]!
+    max(field: MarkdownRemarkFieldsEnum!): Float
+    min(field: MarkdownRemarkFieldsEnum!): Float
     nodes: [MarkdownRemark!]!
     pageInfo: PageInfo!
+    sum(field: MarkdownRemarkFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1643,17 +1547,16 @@ type Query {
     allContentfulBlogPostBodyTextNode(filter: contentfulBlogPostBodyTextNodeFilterInput, limit: Int, skip: Int, sort: contentfulBlogPostBodyTextNodeSortInput): contentfulBlogPostBodyTextNodeConnection!
     allContentfulBlogPostDescriptionTextNode(filter: contentfulBlogPostDescriptionTextNodeFilterInput, limit: Int, skip: Int, sort: contentfulBlogPostDescriptionTextNodeSortInput): contentfulBlogPostDescriptionTextNodeConnection!
     allContentfulContentType(filter: ContentfulContentTypeFilterInput, limit: Int, skip: Int, sort: ContentfulContentTypeSortInput): ContentfulContentTypeConnection!
-    allContentfulEntry(filter: ContentfulEntryFilterInput, limit: Int, skip: Int, sort: ContentfulEntrySortInput): ContentfulEntryConnection!
     allContentfulPerson(filter: ContentfulPersonFilterInput, limit: Int, skip: Int, sort: ContentfulPersonSortInput): ContentfulPersonConnection!
     allContentfulPersonShortBioTextNode(filter: contentfulPersonShortBioTextNodeFilterInput, limit: Int, skip: Int, sort: contentfulPersonShortBioTextNodeSortInput): contentfulPersonShortBioTextNodeConnection!
     allContentfulWlBox(filter: ContentfulWlBoxFilterInput, limit: Int, skip: Int, sort: ContentfulWlBoxSortInput): ContentfulWlBoxConnection!
-    allContentfulWlButton(filter: ContentfulWlButtonFilterInput, limit: Int, skip: Int, sort: ContentfulWlButtonSortInput): ContentfulWlButtonConnection!
     allContentfulWlHero(filter: ContentfulWlHeroFilterInput, limit: Int, skip: Int, sort: ContentfulWlHeroSortInput): ContentfulWlHeroConnection!
     allContentfulWlMenu(filter: ContentfulWlMenuFilterInput, limit: Int, skip: Int, sort: ContentfulWlMenuSortInput): ContentfulWlMenuConnection!
     allContentfulWlMenuLink(filter: ContentfulWlMenuLinkFilterInput, limit: Int, skip: Int, sort: ContentfulWlMenuLinkSortInput): ContentfulWlMenuLinkConnection!
     allContentfulWlPage(filter: ContentfulWlPageFilterInput, limit: Int, skip: Int, sort: ContentfulWlPageSortInput): ContentfulWlPageConnection!
     allContentfulWlSubMenu(filter: ContentfulWlSubMenuFilterInput, limit: Int, skip: Int, sort: ContentfulWlSubMenuSortInput): ContentfulWlSubMenuConnection!
     allContentfulWlText(filter: ContentfulWlTextFilterInput, limit: Int, skip: Int, sort: ContentfulWlTextSortInput): ContentfulWlTextConnection!
+    allContentfulWlTextContentRichTextNode(filter: contentfulWlTextContentRichTextNodeFilterInput, limit: Int, skip: Int, sort: contentfulWlTextContentRichTextNodeSortInput): contentfulWlTextContentRichTextNodeConnection!
     allDirectory(filter: DirectoryFilterInput, limit: Int, skip: Int, sort: DirectorySortInput): DirectoryConnection!
     allFile(filter: FileFilterInput, limit: Int, skip: Int, sort: FileSortInput): FileConnection!
     allImageSharp(filter: ImageSharpFilterInput, limit: Int, skip: Int, sort: ImageSharpSortInput): ImageSharpConnection!
@@ -1663,22 +1566,21 @@ type Query {
     allSiteFunction(filter: SiteFunctionFilterInput, limit: Int, skip: Int, sort: SiteFunctionSortInput): SiteFunctionConnection!
     allSitePage(filter: SitePageFilterInput, limit: Int, skip: Int, sort: SitePageSortInput): SitePageConnection!
     allSitePlugin(filter: SitePluginFilterInput, limit: Int, skip: Int, sort: SitePluginSortInput): SitePluginConnection!
-    contentfulAsset(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, description: StringQueryOperatorInput, file: ContentfulAssetFileFilterInput, fixed: ContentfulFixedFilterInput, fluid: ContentfulFluidFilterInput, gatsbyImageData: JSONQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, resize: ContentfulResizeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulAssetSysFilterInput, title: StringQueryOperatorInput, updatedAt: DateQueryOperatorInput): ContentfulAsset
+    contentfulAsset(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, description: StringQueryOperatorInput, file: ContentfulAssetFileFilterInput, fixed: ContentfulFixedFilterInput, fluid: ContentfulFluidFilterInput, id: StringQueryOperatorInput, internal: InternalFilterInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, resize: ContentfulResizeFilterInput, resolutions: ContentfulResolutionsFilterInput, sizes: ContentfulSizesFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulAssetSysFilterInput, title: StringQueryOperatorInput, updatedAt: DateQueryOperatorInput): ContentfulAsset
     contentfulBlogPost(author: ContentfulPersonFilterInput, body: contentfulBlogPostBodyTextNodeFilterInput, childContentfulBlogPostBodyTextNode: contentfulBlogPostBodyTextNodeFilterInput, childContentfulBlogPostDescriptionTextNode: contentfulBlogPostDescriptionTextNodeFilterInput, children: NodeFilterListInput, childrenContentfulBlogPostBodyTextNode: contentfulBlogPostBodyTextNodeFilterListInput, childrenContentfulBlogPostDescriptionTextNode: contentfulBlogPostDescriptionTextNodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, description: contentfulBlogPostDescriptionTextNodeFilterInput, heroImage: ContentfulAssetFilterInput, id: StringQueryOperatorInput, internal: InternalFilterInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, publishDate: DateQueryOperatorInput, slug: StringQueryOperatorInput, spaceId: StringQueryOperatorInput, sys: ContentfulBlogPostSysFilterInput, tags: StringQueryOperatorInput, title: StringQueryOperatorInput, updatedAt: DateQueryOperatorInput): ContentfulBlogPost
     contentfulBlogPostBodyTextNode(body: StringQueryOperatorInput, childMarkdownRemark: MarkdownRemarkFilterInput, children: NodeFilterListInput, childrenMarkdownRemark: MarkdownRemarkFilterListInput, id: StringQueryOperatorInput, internal: InternalFilterInput, parent: NodeFilterInput, sys: contentfulBlogPostBodyTextNodeSysFilterInput): contentfulBlogPostBodyTextNode
     contentfulBlogPostDescriptionTextNode(childMarkdownRemark: MarkdownRemarkFilterInput, children: NodeFilterListInput, childrenMarkdownRemark: MarkdownRemarkFilterListInput, description: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, parent: NodeFilterInput, sys: contentfulBlogPostDescriptionTextNodeSysFilterInput): contentfulBlogPostDescriptionTextNode
     contentfulContentType(children: NodeFilterListInput, description: StringQueryOperatorInput, displayField: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, parent: NodeFilterInput, sys: ContentfulContentTypeSysFilterInput): ContentfulContentType
-    contentfulEntry(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput): ContentfulEntry
     contentfulPerson(blog_post: ContentfulBlogPostFilterListInput, childContentfulPersonShortBioTextNode: contentfulPersonShortBioTextNodeFilterInput, children: NodeFilterListInput, childrenContentfulPersonShortBioTextNode: contentfulPersonShortBioTextNodeFilterListInput, company: StringQueryOperatorInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, email: StringQueryOperatorInput, facebook: StringQueryOperatorInput, github: StringQueryOperatorInput, id: StringQueryOperatorInput, image: ContentfulAssetFilterInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, phone: StringQueryOperatorInput, shortBio: contentfulPersonShortBioTextNodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulPersonSysFilterInput, title: StringQueryOperatorInput, twitter: StringQueryOperatorInput, updatedAt: DateQueryOperatorInput): ContentfulPerson
     contentfulPersonShortBioTextNode(childMarkdownRemark: MarkdownRemarkFilterInput, children: NodeFilterListInput, childrenMarkdownRemark: MarkdownRemarkFilterListInput, id: StringQueryOperatorInput, internal: InternalFilterInput, parent: NodeFilterInput, shortBio: StringQueryOperatorInput, sys: contentfulPersonShortBioTextNodeSysFilterInput): contentfulPersonShortBioTextNode
     contentfulWlBox(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, outline: BooleanQueryOperatorInput, parent: NodeFilterInput, segments: ContentfulWlTextFilterListInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlBoxSysFilterInput, updatedAt: DateQueryOperatorInput, wlhero: ContentfulWlHeroFilterListInput): ContentfulWlBox
-    contentfulWlButton(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput): ContentfulWlButton
     contentfulWlHero(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, overlay: ContentfulWlBoxFilterInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlHeroSysFilterInput, updatedAt: DateQueryOperatorInput, wlpage: ContentfulWlPageFilterListInput): ContentfulWlHero
     contentfulWlMenu(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, submenus: ContentfulWlSubMenuFilterListInput, sys: ContentfulWlMenuSysFilterInput, updatedAt: DateQueryOperatorInput): ContentfulWlMenu
     contentfulWlMenuLink(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, displayName: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, link: ContentfulWlPageFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlMenuLinkSysFilterInput, updatedAt: DateQueryOperatorInput, wlsubmenu: ContentfulWlSubMenuFilterListInput): ContentfulWlMenuLink
     contentfulWlPage(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, description: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, slug: StringQueryOperatorInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlPageSysFilterInput, title: StringQueryOperatorInput, updatedAt: DateQueryOperatorInput, wlmenulink: ContentfulWlMenuLinkFilterListInput): ContentfulWlPage
     contentfulWlSubMenu(children: NodeFilterListInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, entries: ContentfulWlMenuLinkFilterListInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlSubMenuSysFilterInput, updatedAt: DateQueryOperatorInput, wlmenu: ContentfulWlMenuFilterListInput): ContentfulWlSubMenu
-    contentfulWlText(children: NodeFilterListInput, content: ContentfulWlTextContentFilterInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlTextSysFilterInput, updatedAt: DateQueryOperatorInput, wlbox: ContentfulWlBoxFilterListInput, wlpage: ContentfulWlPageFilterListInput): ContentfulWlText
+    contentfulWlText(childContentfulWlTextContentRichTextNode: contentfulWlTextContentRichTextNodeFilterInput, children: NodeFilterListInput, childrenContentfulWlTextContentRichTextNode: contentfulWlTextContentRichTextNodeFilterListInput, content: contentfulWlTextContentRichTextNodeFilterInput, contentful_id: StringQueryOperatorInput, createdAt: DateQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, node_locale: StringQueryOperatorInput, parent: NodeFilterInput, spaceId: StringQueryOperatorInput, sys: ContentfulWlTextSysFilterInput, updatedAt: DateQueryOperatorInput, wlbox: ContentfulWlBoxFilterListInput, wlpage: ContentfulWlPageFilterListInput): ContentfulWlText
+    contentfulWlTextContentRichTextNode(children: NodeFilterListInput, content: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, json: JSONQueryOperatorInput, nodeType: StringQueryOperatorInput, parent: NodeFilterInput, sys: contentfulWlTextContentRichTextNodeSysFilterInput): contentfulWlTextContentRichTextNode
     directory(absolutePath: StringQueryOperatorInput, accessTime: DateQueryOperatorInput, atime: DateQueryOperatorInput, atimeMs: FloatQueryOperatorInput, base: StringQueryOperatorInput, birthTime: DateQueryOperatorInput, birthtime: DateQueryOperatorInput, birthtimeMs: FloatQueryOperatorInput, changeTime: DateQueryOperatorInput, children: NodeFilterListInput, ctime: DateQueryOperatorInput, ctimeMs: FloatQueryOperatorInput, dev: IntQueryOperatorInput, dir: StringQueryOperatorInput, ext: StringQueryOperatorInput, extension: StringQueryOperatorInput, gid: IntQueryOperatorInput, id: StringQueryOperatorInput, ino: FloatQueryOperatorInput, internal: InternalFilterInput, mode: IntQueryOperatorInput, modifiedTime: DateQueryOperatorInput, mtime: DateQueryOperatorInput, mtimeMs: FloatQueryOperatorInput, name: StringQueryOperatorInput, nlink: IntQueryOperatorInput, parent: NodeFilterInput, prettySize: StringQueryOperatorInput, rdev: IntQueryOperatorInput, relativeDirectory: StringQueryOperatorInput, relativePath: StringQueryOperatorInput, root: StringQueryOperatorInput, size: IntQueryOperatorInput, sourceInstanceName: StringQueryOperatorInput, uid: IntQueryOperatorInput): Directory
     file(absolutePath: StringQueryOperatorInput, accessTime: DateQueryOperatorInput, atime: DateQueryOperatorInput, atimeMs: FloatQueryOperatorInput, base: StringQueryOperatorInput, birthTime: DateQueryOperatorInput, birthtime: DateQueryOperatorInput, birthtimeMs: FloatQueryOperatorInput, changeTime: DateQueryOperatorInput, childImageSharp: ImageSharpFilterInput, children: NodeFilterListInput, childrenImageSharp: ImageSharpFilterListInput, ctime: DateQueryOperatorInput, ctimeMs: FloatQueryOperatorInput, dev: IntQueryOperatorInput, dir: StringQueryOperatorInput, ext: StringQueryOperatorInput, extension: StringQueryOperatorInput, gid: IntQueryOperatorInput, id: StringQueryOperatorInput, ino: FloatQueryOperatorInput, internal: InternalFilterInput, mode: IntQueryOperatorInput, modifiedTime: DateQueryOperatorInput, mtime: DateQueryOperatorInput, mtimeMs: FloatQueryOperatorInput, name: StringQueryOperatorInput, nlink: IntQueryOperatorInput, parent: NodeFilterInput, prettySize: StringQueryOperatorInput, rdev: IntQueryOperatorInput, relativeDirectory: StringQueryOperatorInput, relativePath: StringQueryOperatorInput, root: StringQueryOperatorInput, size: IntQueryOperatorInput, sourceInstanceName: StringQueryOperatorInput, uid: IntQueryOperatorInput): File
     imageSharp(children: NodeFilterListInput, fixed: ImageSharpFixedFilterInput, fluid: ImageSharpFluidFilterInput, gatsbyImageData: JSONQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, original: ImageSharpOriginalFilterInput, parent: NodeFilterInput, resize: ImageSharpResizeFilterInput): ImageSharp
@@ -1686,7 +1588,7 @@ type Query {
     site(buildTime: DateQueryOperatorInput, children: NodeFilterListInput, host: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, parent: NodeFilterInput, pathPrefix: StringQueryOperatorInput, polyfill: BooleanQueryOperatorInput, port: IntQueryOperatorInput, siteMetadata: SiteSiteMetadataFilterInput): Site
     siteBuildMetadata(buildTime: DateQueryOperatorInput, children: NodeFilterListInput, id: StringQueryOperatorInput, internal: InternalFilterInput, parent: NodeFilterInput): SiteBuildMetadata
     siteFunction(absoluteCompiledFilePath: StringQueryOperatorInput, children: NodeFilterListInput, functionRoute: StringQueryOperatorInput, id: StringQueryOperatorInput, internal: InternalFilterInput, matchPath: StringQueryOperatorInput, originalAbsoluteFilePath: StringQueryOperatorInput, originalRelativeFilePath: StringQueryOperatorInput, parent: NodeFilterInput, pluginName: StringQueryOperatorInput, relativeCompiledFilePath: StringQueryOperatorInput): SiteFunction
-    sitePage(children: NodeFilterListInput, component: StringQueryOperatorInput, componentChunkName: StringQueryOperatorInput, context: SitePageContextFilterInput, id: StringQueryOperatorInput, internal: InternalFilterInput, internalComponentName: StringQueryOperatorInput, isCreatedByStatefulCreatePages: BooleanQueryOperatorInput, matchPath: StringQueryOperatorInput, parent: NodeFilterInput, path: StringQueryOperatorInput, pluginCreator: SitePluginFilterInput, pluginCreatorId: StringQueryOperatorInput): SitePage
+    sitePage(children: NodeFilterListInput, component: StringQueryOperatorInput, componentChunkName: StringQueryOperatorInput, context: SitePageContextFilterInput, id: StringQueryOperatorInput, internal: InternalFilterInput, internalComponentName: StringQueryOperatorInput, isCreatedByStatefulCreatePages: BooleanQueryOperatorInput, matchPath: StringQueryOperatorInput, mode: StringQueryOperatorInput, parent: NodeFilterInput, path: StringQueryOperatorInput, pluginCreator: SitePluginFilterInput, pluginCreatorId: StringQueryOperatorInput): SitePage
     sitePlugin(browserAPIs: StringQueryOperatorInput, children: NodeFilterListInput, id: StringQueryOperatorInput, internal: InternalFilterInput, name: StringQueryOperatorInput, nodeAPIs: StringQueryOperatorInput, packageJson: SitePluginPackageJsonFilterInput, parent: NodeFilterInput, pluginFilepath: StringQueryOperatorInput, pluginOptions: SitePluginPluginOptionsFilterInput, resolve: StringQueryOperatorInput, ssrAPIs: StringQueryOperatorInput, version: StringQueryOperatorInput): SitePlugin
 }
 
@@ -1748,11 +1650,16 @@ type SiteBuildMetadataEdge {
 }
 
 type SiteBuildMetadataGroupConnection {
+    distinct(field: SiteBuildMetadataFieldsEnum!): [String!]!
     edges: [SiteBuildMetadataEdge!]!
     field: String!
     fieldValue: String
+    group(field: SiteBuildMetadataFieldsEnum!, limit: Int, skip: Int): [SiteBuildMetadataGroupConnection!]!
+    max(field: SiteBuildMetadataFieldsEnum!): Float
+    min(field: SiteBuildMetadataFieldsEnum!): Float
     nodes: [SiteBuildMetadata!]!
     pageInfo: PageInfo!
+    sum(field: SiteBuildMetadataFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1807,20 +1714,30 @@ type SiteFunctionEdge {
 }
 
 type SiteFunctionGroupConnection {
+    distinct(field: SiteFunctionFieldsEnum!): [String!]!
     edges: [SiteFunctionEdge!]!
     field: String!
     fieldValue: String
+    group(field: SiteFunctionFieldsEnum!, limit: Int, skip: Int): [SiteFunctionGroupConnection!]!
+    max(field: SiteFunctionFieldsEnum!): Float
+    min(field: SiteFunctionFieldsEnum!): Float
     nodes: [SiteFunction!]!
     pageInfo: PageInfo!
+    sum(field: SiteFunctionFieldsEnum!): Float
     totalCount: Int!
 }
 
 type SiteGroupConnection {
+    distinct(field: SiteFieldsEnum!): [String!]!
     edges: [SiteEdge!]!
     field: String!
     fieldValue: String
+    group(field: SiteFieldsEnum!, limit: Int, skip: Int): [SiteGroupConnection!]!
+    max(field: SiteFieldsEnum!): Float
+    min(field: SiteFieldsEnum!): Float
     nodes: [Site!]!
     pageInfo: PageInfo!
+    sum(field: SiteFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1834,6 +1751,7 @@ type SitePage implements Node {
     internalComponentName: String!
     isCreatedByStatefulCreatePages: Boolean
     matchPath: String
+    mode: String
     parent: Node
     path: String!
     pluginCreator: SitePlugin
@@ -1853,9 +1771,7 @@ type SitePageConnection {
 }
 
 type SitePageContext {
-    nextPostSlug: String
-    previousPostSlug: String
-    slug: String
+    name: String
 }
 
 type SitePageEdge {
@@ -1865,11 +1781,16 @@ type SitePageEdge {
 }
 
 type SitePageGroupConnection {
+    distinct(field: SitePageFieldsEnum!): [String!]!
     edges: [SitePageEdge!]!
     field: String!
     fieldValue: String
+    group(field: SitePageFieldsEnum!, limit: Int, skip: Int): [SitePageGroupConnection!]!
+    max(field: SitePageFieldsEnum!): Float
+    min(field: SitePageFieldsEnum!): Float
     nodes: [SitePage!]!
     pageInfo: PageInfo!
+    sum(field: SitePageFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -1908,16 +1829,20 @@ type SitePluginEdge {
 }
 
 type SitePluginGroupConnection {
+    distinct(field: SitePluginFieldsEnum!): [String!]!
     edges: [SitePluginEdge!]!
     field: String!
     fieldValue: String
+    group(field: SitePluginFieldsEnum!, limit: Int, skip: Int): [SitePluginGroupConnection!]!
+    max(field: SitePluginFieldsEnum!): Float
+    min(field: SitePluginFieldsEnum!): Float
     nodes: [SitePlugin!]!
     pageInfo: PageInfo!
+    sum(field: SitePluginFieldsEnum!): Float
     totalCount: Int!
 }
 
 type SitePluginPackageJson {
-    author: String
     dependencies: [SitePluginPackageJsonDependencies]
     description: String
     devDependencies: [SitePluginPackageJsonDevDependencies]
@@ -1947,22 +1872,15 @@ type SitePluginPackageJsonPeerDependencies {
 type SitePluginPluginOptions {
     accessToken: String
     allExtensions: Boolean
-    assetDownloadWorkers: Int
     base64Width: Int
     defaultQuality: Int
-    downloadLocal: Boolean
-    environment: String
     failOnError: Boolean
-    forceFullSync: Boolean
-    host: String
     isTSX: Boolean
     jsxPragma: String
-    pageLimit: Int
     path: String
     pathCheck: Boolean
     spaceId: String
     stripMetadata: Boolean
-    useNameForId: Boolean
 }
 
 type SiteSiteMetadata {
@@ -2002,11 +1920,16 @@ type contentfulBlogPostBodyTextNodeEdge {
 }
 
 type contentfulBlogPostBodyTextNodeGroupConnection {
+    distinct(field: contentfulBlogPostBodyTextNodeFieldsEnum!): [String!]!
     edges: [contentfulBlogPostBodyTextNodeEdge!]!
     field: String!
     fieldValue: String
+    group(field: contentfulBlogPostBodyTextNodeFieldsEnum!, limit: Int, skip: Int): [contentfulBlogPostBodyTextNodeGroupConnection!]!
+    max(field: contentfulBlogPostBodyTextNodeFieldsEnum!): Float
+    min(field: contentfulBlogPostBodyTextNodeFieldsEnum!): Float
     nodes: [contentfulBlogPostBodyTextNode!]!
     pageInfo: PageInfo!
+    sum(field: contentfulBlogPostBodyTextNodeFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -2046,11 +1969,16 @@ type contentfulBlogPostDescriptionTextNodeEdge {
 }
 
 type contentfulBlogPostDescriptionTextNodeGroupConnection {
+    distinct(field: contentfulBlogPostDescriptionTextNodeFieldsEnum!): [String!]!
     edges: [contentfulBlogPostDescriptionTextNodeEdge!]!
     field: String!
     fieldValue: String
+    group(field: contentfulBlogPostDescriptionTextNodeFieldsEnum!, limit: Int, skip: Int): [contentfulBlogPostDescriptionTextNodeGroupConnection!]!
+    max(field: contentfulBlogPostDescriptionTextNodeFieldsEnum!): Float
+    min(field: contentfulBlogPostDescriptionTextNodeFieldsEnum!): Float
     nodes: [contentfulBlogPostDescriptionTextNode!]!
     pageInfo: PageInfo!
+    sum(field: contentfulBlogPostDescriptionTextNodeFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -2090,11 +2018,16 @@ type contentfulPersonShortBioTextNodeEdge {
 }
 
 type contentfulPersonShortBioTextNodeGroupConnection {
+    distinct(field: contentfulPersonShortBioTextNodeFieldsEnum!): [String!]!
     edges: [contentfulPersonShortBioTextNodeEdge!]!
     field: String!
     fieldValue: String
+    group(field: contentfulPersonShortBioTextNodeFieldsEnum!, limit: Int, skip: Int): [contentfulPersonShortBioTextNodeGroupConnection!]!
+    max(field: contentfulPersonShortBioTextNodeFieldsEnum!): Float
+    min(field: contentfulPersonShortBioTextNodeFieldsEnum!): Float
     nodes: [contentfulPersonShortBioTextNode!]!
     pageInfo: PageInfo!
+    sum(field: contentfulPersonShortBioTextNodeFieldsEnum!): Float
     totalCount: Int!
 }
 
@@ -2102,46 +2035,93 @@ type contentfulPersonShortBioTextNodeSys {
     type: String
 }
 
+type contentfulWlTextContentRichTextNode implements Node {
+    children: [Node!]!
+    content: String
+    id: ID!
+    internal: Internal!
+    json: JSON
+    nodeType: String @deprecated(reason : "This field is deprecated, please use 'json' instead.")
+    parent: Node
+    sys: contentfulWlTextContentRichTextNodeSys
+}
+
+type contentfulWlTextContentRichTextNodeConnection {
+    distinct(field: contentfulWlTextContentRichTextNodeFieldsEnum!): [String!]!
+    edges: [contentfulWlTextContentRichTextNodeEdge!]!
+    group(field: contentfulWlTextContentRichTextNodeFieldsEnum!, limit: Int, skip: Int): [contentfulWlTextContentRichTextNodeGroupConnection!]!
+    max(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    min(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    nodes: [contentfulWlTextContentRichTextNode!]!
+    pageInfo: PageInfo!
+    sum(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    totalCount: Int!
+}
+
+type contentfulWlTextContentRichTextNodeEdge {
+    next: contentfulWlTextContentRichTextNode
+    node: contentfulWlTextContentRichTextNode!
+    previous: contentfulWlTextContentRichTextNode
+}
+
+type contentfulWlTextContentRichTextNodeGroupConnection {
+    distinct(field: contentfulWlTextContentRichTextNodeFieldsEnum!): [String!]!
+    edges: [contentfulWlTextContentRichTextNodeEdge!]!
+    field: String!
+    fieldValue: String
+    group(field: contentfulWlTextContentRichTextNodeFieldsEnum!, limit: Int, skip: Int): [contentfulWlTextContentRichTextNodeGroupConnection!]!
+    max(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    min(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    nodes: [contentfulWlTextContentRichTextNode!]!
+    pageInfo: PageInfo!
+    sum(field: contentfulWlTextContentRichTextNodeFieldsEnum!): Float
+    totalCount: Int!
+}
+
+type contentfulWlTextContentRichTextNodeSys {
+    type: String
+}
+
 enum ContentfulAssetFieldsEnum {
-    children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___children___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    children___parent___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    children
+    children___children
+    children___children___children
+    children___children___children___children
+    children___children___children___id
+    children___children___id
+    children___children___internal___content
+    children___children___internal___contentDigest
+    children___children___internal___description
+    children___children___internal___fieldOwners
+    children___children___internal___ignoreType
+    children___children___internal___mediaType
+    children___children___internal___owner
+    children___children___internal___type
+    children___children___parent___children
+    children___children___parent___id
+    children___id
+    children___internal___content
+    children___internal___contentDigest
+    children___internal___description
+    children___internal___fieldOwners
+    children___internal___ignoreType
+    children___internal___mediaType
+    children___internal___owner
+    children___internal___type
+    children___parent___children
+    children___parent___children___children
+    children___parent___children___id
+    children___parent___id
+    children___parent___internal___content
+    children___parent___internal___contentDigest
+    children___parent___internal___description
+    children___parent___internal___fieldOwners
+    children___parent___internal___ignoreType
+    children___parent___internal___mediaType
+    children___parent___internal___owner
+    children___parent___internal___type
+    children___parent___parent___children
+    children___parent___parent___id
     contentful_id
     createdAt
     description
@@ -2168,61 +2148,77 @@ enum ContentfulAssetFieldsEnum {
     fluid___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     fluid___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     fluid___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     id
-    internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    internal___content
+    internal___contentDigest
+    internal___description
+    internal___fieldOwners
+    internal___ignoreType
+    internal___mediaType
+    internal___owner
+    internal___type
     node_locale
-    parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___children___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    parent___parent___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    parent___children
+    parent___children___children
+    parent___children___children___children
+    parent___children___children___id
+    parent___children___id
+    parent___children___internal___content
+    parent___children___internal___contentDigest
+    parent___children___internal___description
+    parent___children___internal___fieldOwners
+    parent___children___internal___ignoreType
+    parent___children___internal___mediaType
+    parent___children___internal___owner
+    parent___children___internal___type
+    parent___children___parent___children
+    parent___children___parent___id
+    parent___id
+    parent___internal___content
+    parent___internal___contentDigest
+    parent___internal___description
+    parent___internal___fieldOwners
+    parent___internal___ignoreType
+    parent___internal___mediaType
+    parent___internal___owner
+    parent___internal___type
+    parent___parent___children
+    parent___parent___children___children
+    parent___parent___children___id
+    parent___parent___id
+    parent___parent___internal___content
+    parent___parent___internal___contentDigest
+    parent___parent___internal___description
+    parent___parent___internal___fieldOwners
+    parent___parent___internal___ignoreType
+    parent___parent___internal___mediaType
+    parent___parent___internal___owner
+    parent___parent___internal___type
+    parent___parent___parent___children
+    parent___parent___parent___id
     resize___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     resize___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     resize___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     resize___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     resize___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     resize___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    resolutions___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___sizes @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    sizes___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     spaceId
     sys___revision
     sys___type
@@ -2280,11 +2276,10 @@ enum ContentfulBlogPostFieldsEnum {
     author___blog_post___description___childrenMarkdownRemark
     author___blog_post___description___description
     author___blog_post___description___id
-    author___blog_post___heroImage___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___blog_post___heroImage___children
     author___blog_post___heroImage___contentful_id
     author___blog_post___heroImage___createdAt
     author___blog_post___heroImage___description
-    author___blog_post___heroImage___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___blog_post___heroImage___id
     author___blog_post___heroImage___node_locale
     author___blog_post___heroImage___spaceId
@@ -2407,9 +2402,9 @@ enum ContentfulBlogPostFieldsEnum {
     author___facebook
     author___github
     author___id
-    author___image___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___children
+    author___image___children___children
+    author___image___children___id
     author___image___contentful_id
     author___image___createdAt
     author___image___description
@@ -2433,25 +2428,41 @@ enum ContentfulBlogPostFieldsEnum {
     author___image___fluid___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___fluid___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___fluid___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___id
-    author___image___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___internal___content
+    author___image___internal___contentDigest
+    author___image___internal___description
+    author___image___internal___fieldOwners
+    author___image___internal___ignoreType
+    author___image___internal___mediaType
+    author___image___internal___owner
+    author___image___internal___type
     author___image___node_locale
-    author___image___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    author___image___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___parent___children
+    author___image___parent___id
     author___image___resize___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___resize___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___resize___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___resize___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___resize___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___resize___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___resolutions___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___sizes @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    author___image___sizes___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     author___image___spaceId
     author___image___sys___revision
     author___image___sys___type
@@ -3162,21 +3173,21 @@ enum ContentfulBlogPostFieldsEnum {
     description___parent___parent___children
     description___parent___parent___id
     description___sys___type
-    heroImage___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___children___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___children
+    heroImage___children___children
+    heroImage___children___children___children
+    heroImage___children___children___id
+    heroImage___children___id
+    heroImage___children___internal___content
+    heroImage___children___internal___contentDigest
+    heroImage___children___internal___description
+    heroImage___children___internal___fieldOwners
+    heroImage___children___internal___ignoreType
+    heroImage___children___internal___mediaType
+    heroImage___children___internal___owner
+    heroImage___children___internal___type
+    heroImage___children___parent___children
+    heroImage___children___parent___id
     heroImage___contentful_id
     heroImage___createdAt
     heroImage___description
@@ -3201,37 +3212,53 @@ enum ContentfulBlogPostFieldsEnum {
     heroImage___fluid___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___fluid___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___fluid___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___id
-    heroImage___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___internal___content
+    heroImage___internal___contentDigest
+    heroImage___internal___description
+    heroImage___internal___fieldOwners
+    heroImage___internal___ignoreType
+    heroImage___internal___mediaType
+    heroImage___internal___owner
+    heroImage___internal___type
     heroImage___node_locale
-    heroImage___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    heroImage___parent___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___parent___children
+    heroImage___parent___children___children
+    heroImage___parent___children___id
+    heroImage___parent___id
+    heroImage___parent___internal___content
+    heroImage___parent___internal___contentDigest
+    heroImage___parent___internal___description
+    heroImage___parent___internal___fieldOwners
+    heroImage___parent___internal___ignoreType
+    heroImage___parent___internal___mediaType
+    heroImage___parent___internal___owner
+    heroImage___parent___internal___type
+    heroImage___parent___parent___children
+    heroImage___parent___parent___id
     heroImage___resize___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___resize___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___resize___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___resize___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___resize___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___resize___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___resolutions___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___sizes @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    heroImage___sizes___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     heroImage___spaceId
     heroImage___sys___revision
     heroImage___sys___type
@@ -3391,97 +3418,6 @@ enum ContentfulContentTypeFieldsEnum {
     sys___type
 }
 
-enum ContentfulEntryFieldsEnum {
-    children
-    children___children
-    children___children___children
-    children___children___children___children
-    children___children___children___id
-    children___children___id
-    children___children___internal___content
-    children___children___internal___contentDigest
-    children___children___internal___description
-    children___children___internal___fieldOwners
-    children___children___internal___ignoreType
-    children___children___internal___mediaType
-    children___children___internal___owner
-    children___children___internal___type
-    children___children___parent___children
-    children___children___parent___id
-    children___id
-    children___internal___content
-    children___internal___contentDigest
-    children___internal___description
-    children___internal___fieldOwners
-    children___internal___ignoreType
-    children___internal___mediaType
-    children___internal___owner
-    children___internal___type
-    children___parent___children
-    children___parent___children___children
-    children___parent___children___id
-    children___parent___id
-    children___parent___internal___content
-    children___parent___internal___contentDigest
-    children___parent___internal___description
-    children___parent___internal___fieldOwners
-    children___parent___internal___ignoreType
-    children___parent___internal___mediaType
-    children___parent___internal___owner
-    children___parent___internal___type
-    children___parent___parent___children
-    children___parent___parent___id
-    contentful_id
-    id
-    internal___content
-    internal___contentDigest
-    internal___description
-    internal___fieldOwners
-    internal___ignoreType
-    internal___mediaType
-    internal___owner
-    internal___type
-    node_locale
-    parent___children
-    parent___children___children
-    parent___children___children___children
-    parent___children___children___id
-    parent___children___id
-    parent___children___internal___content
-    parent___children___internal___contentDigest
-    parent___children___internal___description
-    parent___children___internal___fieldOwners
-    parent___children___internal___ignoreType
-    parent___children___internal___mediaType
-    parent___children___internal___owner
-    parent___children___internal___type
-    parent___children___parent___children
-    parent___children___parent___id
-    parent___id
-    parent___internal___content
-    parent___internal___contentDigest
-    parent___internal___description
-    parent___internal___fieldOwners
-    parent___internal___ignoreType
-    parent___internal___mediaType
-    parent___internal___owner
-    parent___internal___type
-    parent___parent___children
-    parent___parent___children___children
-    parent___parent___children___id
-    parent___parent___id
-    parent___parent___internal___content
-    parent___parent___internal___contentDigest
-    parent___parent___internal___description
-    parent___parent___internal___fieldOwners
-    parent___parent___internal___ignoreType
-    parent___parent___internal___mediaType
-    parent___parent___internal___owner
-    parent___parent___internal___type
-    parent___parent___parent___children
-    parent___parent___parent___id
-}
-
 enum ContentfulImageCropFocus {
     BOTTOM
     BOTTOM_LEFT
@@ -3497,24 +3433,10 @@ enum ContentfulImageCropFocus {
 }
 
 enum ContentfulImageFormat {
-    AUTO
     JPG
     NO_CHANGE
     PNG
     WEBP
-}
-
-enum ContentfulImageLayout {
-    CONSTRAINED
-    FIXED
-    FULL_WIDTH
-}
-
-enum ContentfulImagePlaceholder {
-    BLURRED
-    DOMINANT_COLOR
-    NONE
-    TRACED_SVG
 }
 
 enum ContentfulPersonFieldsEnum {
@@ -3552,11 +3474,10 @@ enum ContentfulPersonFieldsEnum {
     blog_post___author___facebook
     blog_post___author___github
     blog_post___author___id
-    blog_post___author___image___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___author___image___children
     blog_post___author___image___contentful_id
     blog_post___author___image___createdAt
     blog_post___author___image___description
-    blog_post___author___image___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___author___image___id
     blog_post___author___image___node_locale
     blog_post___author___image___spaceId
@@ -3826,9 +3747,9 @@ enum ContentfulPersonFieldsEnum {
     blog_post___description___parent___children
     blog_post___description___parent___id
     blog_post___description___sys___type
-    blog_post___heroImage___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___children
+    blog_post___heroImage___children___children
+    blog_post___heroImage___children___id
     blog_post___heroImage___contentful_id
     blog_post___heroImage___createdAt
     blog_post___heroImage___description
@@ -3852,25 +3773,41 @@ enum ContentfulPersonFieldsEnum {
     blog_post___heroImage___fluid___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___fluid___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___fluid___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___id
-    blog_post___heroImage___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___internal___content
+    blog_post___heroImage___internal___contentDigest
+    blog_post___heroImage___internal___description
+    blog_post___heroImage___internal___fieldOwners
+    blog_post___heroImage___internal___ignoreType
+    blog_post___heroImage___internal___mediaType
+    blog_post___heroImage___internal___owner
+    blog_post___heroImage___internal___type
     blog_post___heroImage___node_locale
-    blog_post___heroImage___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    blog_post___heroImage___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___parent___children
+    blog_post___heroImage___parent___id
     blog_post___heroImage___resize___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___resize___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___resize___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___resize___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___resize___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___resize___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___resolutions___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___sizes @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    blog_post___heroImage___sizes___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     blog_post___heroImage___spaceId
     blog_post___heroImage___sys___revision
     blog_post___heroImage___sys___type
@@ -4153,21 +4090,21 @@ enum ContentfulPersonFieldsEnum {
     facebook
     github
     id
-    image___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___children___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___children
+    image___children___children
+    image___children___children___children
+    image___children___children___id
+    image___children___id
+    image___children___internal___content
+    image___children___internal___contentDigest
+    image___children___internal___description
+    image___children___internal___fieldOwners
+    image___children___internal___ignoreType
+    image___children___internal___mediaType
+    image___children___internal___owner
+    image___children___internal___type
+    image___children___parent___children
+    image___children___parent___id
     image___contentful_id
     image___createdAt
     image___description
@@ -4192,37 +4129,53 @@ enum ContentfulPersonFieldsEnum {
     image___fluid___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___fluid___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___fluid___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___gatsbyImageData @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___id
-    image___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___internal___content
+    image___internal___contentDigest
+    image___internal___description
+    image___internal___fieldOwners
+    image___internal___ignoreType
+    image___internal___mediaType
+    image___internal___owner
+    image___internal___type
     image___node_locale
-    image___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___children___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___children___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___content @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___contentDigest @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___description @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___fieldOwners @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___ignoreType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___mediaType @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___owner @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___internal___type @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___parent___children @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
-    image___parent___parent___id @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___parent___children
+    image___parent___children___children
+    image___parent___children___id
+    image___parent___id
+    image___parent___internal___content
+    image___parent___internal___contentDigest
+    image___parent___internal___description
+    image___parent___internal___fieldOwners
+    image___parent___internal___ignoreType
+    image___parent___internal___mediaType
+    image___parent___internal___owner
+    image___parent___internal___type
+    image___parent___parent___children
+    image___parent___parent___id
     image___resize___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___resize___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___resize___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___resize___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___resize___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___resize___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___height @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___resolutions___width @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___aspectRatio @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___base64 @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___sizes @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___src @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___srcSet @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___srcSetWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___srcWebp @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
+    image___sizes___tracedSVG @deprecated(reason : "Sorting on fields that need arguments to resolve is deprecated.")
     image___spaceId
     image___sys___revision
     image___sys___type
@@ -4480,7 +4433,44 @@ enum ContentfulWlBoxFieldsEnum {
     parent___parent___parent___children
     parent___parent___parent___id
     segments
+    segments___childContentfulWlTextContentRichTextNode___children
+    segments___childContentfulWlTextContentRichTextNode___children___children
+    segments___childContentfulWlTextContentRichTextNode___children___id
+    segments___childContentfulWlTextContentRichTextNode___content
+    segments___childContentfulWlTextContentRichTextNode___id
+    segments___childContentfulWlTextContentRichTextNode___internal___content
+    segments___childContentfulWlTextContentRichTextNode___internal___contentDigest
+    segments___childContentfulWlTextContentRichTextNode___internal___description
+    segments___childContentfulWlTextContentRichTextNode___internal___fieldOwners
+    segments___childContentfulWlTextContentRichTextNode___internal___ignoreType
+    segments___childContentfulWlTextContentRichTextNode___internal___mediaType
+    segments___childContentfulWlTextContentRichTextNode___internal___owner
+    segments___childContentfulWlTextContentRichTextNode___internal___type
+    segments___childContentfulWlTextContentRichTextNode___json
+    segments___childContentfulWlTextContentRichTextNode___nodeType
+    segments___childContentfulWlTextContentRichTextNode___parent___children
+    segments___childContentfulWlTextContentRichTextNode___parent___id
+    segments___childContentfulWlTextContentRichTextNode___sys___type
     segments___children
+    segments___childrenContentfulWlTextContentRichTextNode
+    segments___childrenContentfulWlTextContentRichTextNode___children
+    segments___childrenContentfulWlTextContentRichTextNode___children___children
+    segments___childrenContentfulWlTextContentRichTextNode___children___id
+    segments___childrenContentfulWlTextContentRichTextNode___content
+    segments___childrenContentfulWlTextContentRichTextNode___id
+    segments___childrenContentfulWlTextContentRichTextNode___internal___content
+    segments___childrenContentfulWlTextContentRichTextNode___internal___contentDigest
+    segments___childrenContentfulWlTextContentRichTextNode___internal___description
+    segments___childrenContentfulWlTextContentRichTextNode___internal___fieldOwners
+    segments___childrenContentfulWlTextContentRichTextNode___internal___ignoreType
+    segments___childrenContentfulWlTextContentRichTextNode___internal___mediaType
+    segments___childrenContentfulWlTextContentRichTextNode___internal___owner
+    segments___childrenContentfulWlTextContentRichTextNode___internal___type
+    segments___childrenContentfulWlTextContentRichTextNode___json
+    segments___childrenContentfulWlTextContentRichTextNode___nodeType
+    segments___childrenContentfulWlTextContentRichTextNode___parent___children
+    segments___childrenContentfulWlTextContentRichTextNode___parent___id
+    segments___childrenContentfulWlTextContentRichTextNode___sys___type
     segments___children___children
     segments___children___children___children
     segments___children___children___id
@@ -4495,7 +4485,24 @@ enum ContentfulWlBoxFieldsEnum {
     segments___children___internal___type
     segments___children___parent___children
     segments___children___parent___id
-    segments___content___raw
+    segments___content___children
+    segments___content___children___children
+    segments___content___children___id
+    segments___content___content
+    segments___content___id
+    segments___content___internal___content
+    segments___content___internal___contentDigest
+    segments___content___internal___description
+    segments___content___internal___fieldOwners
+    segments___content___internal___ignoreType
+    segments___content___internal___mediaType
+    segments___content___internal___owner
+    segments___content___internal___type
+    segments___content___json
+    segments___content___nodeType
+    segments___content___parent___children
+    segments___content___parent___id
+    segments___content___sys___type
     segments___contentful_id
     segments___createdAt
     segments___id
@@ -4549,6 +4556,7 @@ enum ContentfulWlBoxFieldsEnum {
     segments___wlbox___parent___id
     segments___wlbox___segments
     segments___wlbox___segments___children
+    segments___wlbox___segments___childrenContentfulWlTextContentRichTextNode
     segments___wlbox___segments___contentful_id
     segments___wlbox___segments___createdAt
     segments___wlbox___segments___id
@@ -4666,6 +4674,7 @@ enum ContentfulWlBoxFieldsEnum {
     wlhero___overlay___parent___id
     wlhero___overlay___segments
     wlhero___overlay___segments___children
+    wlhero___overlay___segments___childrenContentfulWlTextContentRichTextNode
     wlhero___overlay___segments___contentful_id
     wlhero___overlay___segments___createdAt
     wlhero___overlay___segments___id
@@ -4744,97 +4753,6 @@ enum ContentfulWlBoxFieldsEnum {
     wlhero___wlpage___wlmenulink___spaceId
     wlhero___wlpage___wlmenulink___updatedAt
     wlhero___wlpage___wlmenulink___wlsubmenu
-}
-
-enum ContentfulWlButtonFieldsEnum {
-    children
-    children___children
-    children___children___children
-    children___children___children___children
-    children___children___children___id
-    children___children___id
-    children___children___internal___content
-    children___children___internal___contentDigest
-    children___children___internal___description
-    children___children___internal___fieldOwners
-    children___children___internal___ignoreType
-    children___children___internal___mediaType
-    children___children___internal___owner
-    children___children___internal___type
-    children___children___parent___children
-    children___children___parent___id
-    children___id
-    children___internal___content
-    children___internal___contentDigest
-    children___internal___description
-    children___internal___fieldOwners
-    children___internal___ignoreType
-    children___internal___mediaType
-    children___internal___owner
-    children___internal___type
-    children___parent___children
-    children___parent___children___children
-    children___parent___children___id
-    children___parent___id
-    children___parent___internal___content
-    children___parent___internal___contentDigest
-    children___parent___internal___description
-    children___parent___internal___fieldOwners
-    children___parent___internal___ignoreType
-    children___parent___internal___mediaType
-    children___parent___internal___owner
-    children___parent___internal___type
-    children___parent___parent___children
-    children___parent___parent___id
-    contentful_id
-    id
-    internal___content
-    internal___contentDigest
-    internal___description
-    internal___fieldOwners
-    internal___ignoreType
-    internal___mediaType
-    internal___owner
-    internal___type
-    node_locale
-    parent___children
-    parent___children___children
-    parent___children___children___children
-    parent___children___children___id
-    parent___children___id
-    parent___children___internal___content
-    parent___children___internal___contentDigest
-    parent___children___internal___description
-    parent___children___internal___fieldOwners
-    parent___children___internal___ignoreType
-    parent___children___internal___mediaType
-    parent___children___internal___owner
-    parent___children___internal___type
-    parent___children___parent___children
-    parent___children___parent___id
-    parent___id
-    parent___internal___content
-    parent___internal___contentDigest
-    parent___internal___description
-    parent___internal___fieldOwners
-    parent___internal___ignoreType
-    parent___internal___mediaType
-    parent___internal___owner
-    parent___internal___type
-    parent___parent___children
-    parent___parent___children___children
-    parent___parent___children___id
-    parent___parent___id
-    parent___parent___internal___content
-    parent___parent___internal___contentDigest
-    parent___parent___internal___description
-    parent___parent___internal___fieldOwners
-    parent___parent___internal___ignoreType
-    parent___parent___internal___mediaType
-    parent___parent___internal___owner
-    parent___parent___internal___type
-    parent___parent___parent___children
-    parent___parent___parent___id
 }
 
 enum ContentfulWlHeroFieldsEnum {
@@ -4934,10 +4852,25 @@ enum ContentfulWlHeroFieldsEnum {
     overlay___parent___parent___children
     overlay___parent___parent___id
     overlay___segments
+    overlay___segments___childContentfulWlTextContentRichTextNode___children
+    overlay___segments___childContentfulWlTextContentRichTextNode___content
+    overlay___segments___childContentfulWlTextContentRichTextNode___id
+    overlay___segments___childContentfulWlTextContentRichTextNode___json
+    overlay___segments___childContentfulWlTextContentRichTextNode___nodeType
     overlay___segments___children
+    overlay___segments___childrenContentfulWlTextContentRichTextNode
+    overlay___segments___childrenContentfulWlTextContentRichTextNode___children
+    overlay___segments___childrenContentfulWlTextContentRichTextNode___content
+    overlay___segments___childrenContentfulWlTextContentRichTextNode___id
+    overlay___segments___childrenContentfulWlTextContentRichTextNode___json
+    overlay___segments___childrenContentfulWlTextContentRichTextNode___nodeType
     overlay___segments___children___children
     overlay___segments___children___id
-    overlay___segments___content___raw
+    overlay___segments___content___children
+    overlay___segments___content___content
+    overlay___segments___content___id
+    overlay___segments___content___json
+    overlay___segments___content___nodeType
     overlay___segments___contentful_id
     overlay___segments___createdAt
     overlay___segments___id
@@ -6281,7 +6214,92 @@ enum ContentfulWlSubMenuFieldsEnum {
 }
 
 enum ContentfulWlTextFieldsEnum {
+    childContentfulWlTextContentRichTextNode___children
+    childContentfulWlTextContentRichTextNode___children___children
+    childContentfulWlTextContentRichTextNode___children___children___children
+    childContentfulWlTextContentRichTextNode___children___children___id
+    childContentfulWlTextContentRichTextNode___children___id
+    childContentfulWlTextContentRichTextNode___children___internal___content
+    childContentfulWlTextContentRichTextNode___children___internal___contentDigest
+    childContentfulWlTextContentRichTextNode___children___internal___description
+    childContentfulWlTextContentRichTextNode___children___internal___fieldOwners
+    childContentfulWlTextContentRichTextNode___children___internal___ignoreType
+    childContentfulWlTextContentRichTextNode___children___internal___mediaType
+    childContentfulWlTextContentRichTextNode___children___internal___owner
+    childContentfulWlTextContentRichTextNode___children___internal___type
+    childContentfulWlTextContentRichTextNode___children___parent___children
+    childContentfulWlTextContentRichTextNode___children___parent___id
+    childContentfulWlTextContentRichTextNode___content
+    childContentfulWlTextContentRichTextNode___id
+    childContentfulWlTextContentRichTextNode___internal___content
+    childContentfulWlTextContentRichTextNode___internal___contentDigest
+    childContentfulWlTextContentRichTextNode___internal___description
+    childContentfulWlTextContentRichTextNode___internal___fieldOwners
+    childContentfulWlTextContentRichTextNode___internal___ignoreType
+    childContentfulWlTextContentRichTextNode___internal___mediaType
+    childContentfulWlTextContentRichTextNode___internal___owner
+    childContentfulWlTextContentRichTextNode___internal___type
+    childContentfulWlTextContentRichTextNode___json
+    childContentfulWlTextContentRichTextNode___nodeType
+    childContentfulWlTextContentRichTextNode___parent___children
+    childContentfulWlTextContentRichTextNode___parent___children___children
+    childContentfulWlTextContentRichTextNode___parent___children___id
+    childContentfulWlTextContentRichTextNode___parent___id
+    childContentfulWlTextContentRichTextNode___parent___internal___content
+    childContentfulWlTextContentRichTextNode___parent___internal___contentDigest
+    childContentfulWlTextContentRichTextNode___parent___internal___description
+    childContentfulWlTextContentRichTextNode___parent___internal___fieldOwners
+    childContentfulWlTextContentRichTextNode___parent___internal___ignoreType
+    childContentfulWlTextContentRichTextNode___parent___internal___mediaType
+    childContentfulWlTextContentRichTextNode___parent___internal___owner
+    childContentfulWlTextContentRichTextNode___parent___internal___type
+    childContentfulWlTextContentRichTextNode___parent___parent___children
+    childContentfulWlTextContentRichTextNode___parent___parent___id
+    childContentfulWlTextContentRichTextNode___sys___type
     children
+    childrenContentfulWlTextContentRichTextNode
+    childrenContentfulWlTextContentRichTextNode___children
+    childrenContentfulWlTextContentRichTextNode___children___children
+    childrenContentfulWlTextContentRichTextNode___children___children___children
+    childrenContentfulWlTextContentRichTextNode___children___children___id
+    childrenContentfulWlTextContentRichTextNode___children___id
+    childrenContentfulWlTextContentRichTextNode___children___internal___content
+    childrenContentfulWlTextContentRichTextNode___children___internal___contentDigest
+    childrenContentfulWlTextContentRichTextNode___children___internal___description
+    childrenContentfulWlTextContentRichTextNode___children___internal___fieldOwners
+    childrenContentfulWlTextContentRichTextNode___children___internal___ignoreType
+    childrenContentfulWlTextContentRichTextNode___children___internal___mediaType
+    childrenContentfulWlTextContentRichTextNode___children___internal___owner
+    childrenContentfulWlTextContentRichTextNode___children___internal___type
+    childrenContentfulWlTextContentRichTextNode___children___parent___children
+    childrenContentfulWlTextContentRichTextNode___children___parent___id
+    childrenContentfulWlTextContentRichTextNode___content
+    childrenContentfulWlTextContentRichTextNode___id
+    childrenContentfulWlTextContentRichTextNode___internal___content
+    childrenContentfulWlTextContentRichTextNode___internal___contentDigest
+    childrenContentfulWlTextContentRichTextNode___internal___description
+    childrenContentfulWlTextContentRichTextNode___internal___fieldOwners
+    childrenContentfulWlTextContentRichTextNode___internal___ignoreType
+    childrenContentfulWlTextContentRichTextNode___internal___mediaType
+    childrenContentfulWlTextContentRichTextNode___internal___owner
+    childrenContentfulWlTextContentRichTextNode___internal___type
+    childrenContentfulWlTextContentRichTextNode___json
+    childrenContentfulWlTextContentRichTextNode___nodeType
+    childrenContentfulWlTextContentRichTextNode___parent___children
+    childrenContentfulWlTextContentRichTextNode___parent___children___children
+    childrenContentfulWlTextContentRichTextNode___parent___children___id
+    childrenContentfulWlTextContentRichTextNode___parent___id
+    childrenContentfulWlTextContentRichTextNode___parent___internal___content
+    childrenContentfulWlTextContentRichTextNode___parent___internal___contentDigest
+    childrenContentfulWlTextContentRichTextNode___parent___internal___description
+    childrenContentfulWlTextContentRichTextNode___parent___internal___fieldOwners
+    childrenContentfulWlTextContentRichTextNode___parent___internal___ignoreType
+    childrenContentfulWlTextContentRichTextNode___parent___internal___mediaType
+    childrenContentfulWlTextContentRichTextNode___parent___internal___owner
+    childrenContentfulWlTextContentRichTextNode___parent___internal___type
+    childrenContentfulWlTextContentRichTextNode___parent___parent___children
+    childrenContentfulWlTextContentRichTextNode___parent___parent___id
+    childrenContentfulWlTextContentRichTextNode___sys___type
     children___children
     children___children___children
     children___children___children___children
@@ -6320,7 +6338,48 @@ enum ContentfulWlTextFieldsEnum {
     children___parent___internal___type
     children___parent___parent___children
     children___parent___parent___id
-    content___raw
+    content___children
+    content___children___children
+    content___children___children___children
+    content___children___children___id
+    content___children___id
+    content___children___internal___content
+    content___children___internal___contentDigest
+    content___children___internal___description
+    content___children___internal___fieldOwners
+    content___children___internal___ignoreType
+    content___children___internal___mediaType
+    content___children___internal___owner
+    content___children___internal___type
+    content___children___parent___children
+    content___children___parent___id
+    content___content
+    content___id
+    content___internal___content
+    content___internal___contentDigest
+    content___internal___description
+    content___internal___fieldOwners
+    content___internal___ignoreType
+    content___internal___mediaType
+    content___internal___owner
+    content___internal___type
+    content___json
+    content___nodeType
+    content___parent___children
+    content___parent___children___children
+    content___parent___children___id
+    content___parent___id
+    content___parent___internal___content
+    content___parent___internal___contentDigest
+    content___parent___internal___description
+    content___parent___internal___fieldOwners
+    content___parent___internal___ignoreType
+    content___parent___internal___mediaType
+    content___parent___internal___owner
+    content___parent___internal___type
+    content___parent___parent___children
+    content___parent___parent___id
+    content___sys___type
     contentful_id
     createdAt
     id
@@ -6424,10 +6483,25 @@ enum ContentfulWlTextFieldsEnum {
     wlbox___parent___parent___children
     wlbox___parent___parent___id
     wlbox___segments
+    wlbox___segments___childContentfulWlTextContentRichTextNode___children
+    wlbox___segments___childContentfulWlTextContentRichTextNode___content
+    wlbox___segments___childContentfulWlTextContentRichTextNode___id
+    wlbox___segments___childContentfulWlTextContentRichTextNode___json
+    wlbox___segments___childContentfulWlTextContentRichTextNode___nodeType
     wlbox___segments___children
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode___children
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode___content
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode___id
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode___json
+    wlbox___segments___childrenContentfulWlTextContentRichTextNode___nodeType
     wlbox___segments___children___children
     wlbox___segments___children___id
-    wlbox___segments___content___raw
+    wlbox___segments___content___children
+    wlbox___segments___content___content
+    wlbox___segments___content___id
+    wlbox___segments___content___json
+    wlbox___segments___content___nodeType
     wlbox___segments___contentful_id
     wlbox___segments___createdAt
     wlbox___segments___id
@@ -7634,9 +7708,7 @@ enum SitePageFieldsEnum {
     children___parent___parent___id
     component
     componentChunkName
-    context___nextPostSlug
-    context___previousPostSlug
-    context___slug
+    context___name
     id
     internalComponentName
     internal___content
@@ -7649,6 +7721,7 @@ enum SitePageFieldsEnum {
     internal___type
     isCreatedByStatefulCreatePages
     matchPath
+    mode
     parent___children
     parent___children___children
     parent___children___children___children
@@ -7716,7 +7789,6 @@ enum SitePageFieldsEnum {
     pluginCreator___internal___type
     pluginCreator___name
     pluginCreator___nodeAPIs
-    pluginCreator___packageJson___author
     pluginCreator___packageJson___dependencies
     pluginCreator___packageJson___dependencies___name
     pluginCreator___packageJson___dependencies___version
@@ -7749,22 +7821,15 @@ enum SitePageFieldsEnum {
     pluginCreator___pluginFilepath
     pluginCreator___pluginOptions___accessToken
     pluginCreator___pluginOptions___allExtensions
-    pluginCreator___pluginOptions___assetDownloadWorkers
     pluginCreator___pluginOptions___base64Width
     pluginCreator___pluginOptions___defaultQuality
-    pluginCreator___pluginOptions___downloadLocal
-    pluginCreator___pluginOptions___environment
     pluginCreator___pluginOptions___failOnError
-    pluginCreator___pluginOptions___forceFullSync
-    pluginCreator___pluginOptions___host
     pluginCreator___pluginOptions___isTSX
     pluginCreator___pluginOptions___jsxPragma
-    pluginCreator___pluginOptions___pageLimit
     pluginCreator___pluginOptions___path
     pluginCreator___pluginOptions___pathCheck
     pluginCreator___pluginOptions___spaceId
     pluginCreator___pluginOptions___stripMetadata
-    pluginCreator___pluginOptions___useNameForId
     pluginCreator___resolve
     pluginCreator___ssrAPIs
     pluginCreator___version
@@ -7822,7 +7887,6 @@ enum SitePluginFieldsEnum {
     internal___type
     name
     nodeAPIs
-    packageJson___author
     packageJson___dependencies
     packageJson___dependencies___name
     packageJson___dependencies___version
@@ -7879,22 +7943,15 @@ enum SitePluginFieldsEnum {
     pluginFilepath
     pluginOptions___accessToken
     pluginOptions___allExtensions
-    pluginOptions___assetDownloadWorkers
     pluginOptions___base64Width
     pluginOptions___defaultQuality
-    pluginOptions___downloadLocal
-    pluginOptions___environment
     pluginOptions___failOnError
-    pluginOptions___forceFullSync
-    pluginOptions___host
     pluginOptions___isTSX
     pluginOptions___jsxPragma
-    pluginOptions___pageLimit
     pluginOptions___path
     pluginOptions___pathCheck
     pluginOptions___spaceId
     pluginOptions___stripMetadata
-    pluginOptions___useNameForId
     resolve
     ssrAPIs
     version
@@ -8499,6 +8556,99 @@ enum contentfulPersonShortBioTextNodeFieldsEnum {
     sys___type
 }
 
+enum contentfulWlTextContentRichTextNodeFieldsEnum {
+    children
+    children___children
+    children___children___children
+    children___children___children___children
+    children___children___children___id
+    children___children___id
+    children___children___internal___content
+    children___children___internal___contentDigest
+    children___children___internal___description
+    children___children___internal___fieldOwners
+    children___children___internal___ignoreType
+    children___children___internal___mediaType
+    children___children___internal___owner
+    children___children___internal___type
+    children___children___parent___children
+    children___children___parent___id
+    children___id
+    children___internal___content
+    children___internal___contentDigest
+    children___internal___description
+    children___internal___fieldOwners
+    children___internal___ignoreType
+    children___internal___mediaType
+    children___internal___owner
+    children___internal___type
+    children___parent___children
+    children___parent___children___children
+    children___parent___children___id
+    children___parent___id
+    children___parent___internal___content
+    children___parent___internal___contentDigest
+    children___parent___internal___description
+    children___parent___internal___fieldOwners
+    children___parent___internal___ignoreType
+    children___parent___internal___mediaType
+    children___parent___internal___owner
+    children___parent___internal___type
+    children___parent___parent___children
+    children___parent___parent___id
+    content
+    id
+    internal___content
+    internal___contentDigest
+    internal___description
+    internal___fieldOwners
+    internal___ignoreType
+    internal___mediaType
+    internal___owner
+    internal___type
+    json
+    nodeType
+    parent___children
+    parent___children___children
+    parent___children___children___children
+    parent___children___children___id
+    parent___children___id
+    parent___children___internal___content
+    parent___children___internal___contentDigest
+    parent___children___internal___description
+    parent___children___internal___fieldOwners
+    parent___children___internal___ignoreType
+    parent___children___internal___mediaType
+    parent___children___internal___owner
+    parent___children___internal___type
+    parent___children___parent___children
+    parent___children___parent___id
+    parent___id
+    parent___internal___content
+    parent___internal___contentDigest
+    parent___internal___description
+    parent___internal___fieldOwners
+    parent___internal___ignoreType
+    parent___internal___mediaType
+    parent___internal___owner
+    parent___internal___type
+    parent___parent___children
+    parent___parent___children___children
+    parent___parent___children___id
+    parent___parent___id
+    parent___parent___internal___content
+    parent___parent___internal___contentDigest
+    parent___parent___internal___description
+    parent___parent___internal___fieldOwners
+    parent___parent___internal___ignoreType
+    parent___parent___internal___mediaType
+    parent___parent___internal___owner
+    parent___parent___internal___type
+    parent___parent___parent___children
+    parent___parent___parent___id
+    sys___type
+}
+
 input AVIFOptions {
     lossless: Boolean
     quality: Int
@@ -8544,12 +8694,13 @@ input ContentfulAssetFilterInput {
     file: ContentfulAssetFileFilterInput
     fixed: ContentfulFixedFilterInput
     fluid: ContentfulFluidFilterInput
-    gatsbyImageData: JSONQueryOperatorInput
     id: StringQueryOperatorInput
     internal: InternalFilterInput
     node_locale: StringQueryOperatorInput
     parent: NodeFilterInput
     resize: ContentfulResizeFilterInput
+    resolutions: ContentfulResolutionsFilterInput
+    sizes: ContentfulSizesFilterInput
     spaceId: StringQueryOperatorInput
     sys: ContentfulAssetSysFilterInput
     title: StringQueryOperatorInput
@@ -8636,20 +8787,6 @@ input ContentfulContentTypeSysFilterInput {
     type: StringQueryOperatorInput
 }
 
-input ContentfulEntryFilterInput {
-    children: NodeFilterListInput
-    contentful_id: StringQueryOperatorInput
-    id: StringQueryOperatorInput
-    internal: InternalFilterInput
-    node_locale: StringQueryOperatorInput
-    parent: NodeFilterInput
-}
-
-input ContentfulEntrySortInput {
-    fields: [ContentfulEntryFieldsEnum]
-    order: [SortOrderEnum] = [ASC]
-}
-
 input ContentfulFixedFilterInput {
     aspectRatio: FloatQueryOperatorInput
     base64: StringQueryOperatorInput
@@ -8729,6 +8866,29 @@ input ContentfulResizeFilterInput {
     width: IntQueryOperatorInput
 }
 
+input ContentfulResolutionsFilterInput {
+    aspectRatio: FloatQueryOperatorInput
+    base64: StringQueryOperatorInput
+    height: FloatQueryOperatorInput
+    src: StringQueryOperatorInput
+    srcSet: StringQueryOperatorInput
+    srcSetWebp: StringQueryOperatorInput
+    srcWebp: StringQueryOperatorInput
+    tracedSVG: StringQueryOperatorInput
+    width: FloatQueryOperatorInput
+}
+
+input ContentfulSizesFilterInput {
+    aspectRatio: FloatQueryOperatorInput
+    base64: StringQueryOperatorInput
+    sizes: StringQueryOperatorInput
+    src: StringQueryOperatorInput
+    srcSet: StringQueryOperatorInput
+    srcSetWebp: StringQueryOperatorInput
+    srcWebp: StringQueryOperatorInput
+    tracedSVG: StringQueryOperatorInput
+}
+
 input ContentfulWlBoxFilterInput {
     children: NodeFilterListInput
     contentful_id: StringQueryOperatorInput
@@ -8769,20 +8929,6 @@ input ContentfulWlBoxSysFilterInput {
     contentType: ContentfulWlBoxSysContentTypeFilterInput
     revision: IntQueryOperatorInput
     type: StringQueryOperatorInput
-}
-
-input ContentfulWlButtonFilterInput {
-    children: NodeFilterListInput
-    contentful_id: StringQueryOperatorInput
-    id: StringQueryOperatorInput
-    internal: InternalFilterInput
-    node_locale: StringQueryOperatorInput
-    parent: NodeFilterInput
-}
-
-input ContentfulWlButtonSortInput {
-    fields: [ContentfulWlButtonFieldsEnum]
-    order: [SortOrderEnum] = [ASC]
 }
 
 input ContentfulWlHeroFilterInput {
@@ -8992,13 +9138,11 @@ input ContentfulWlSubMenuSysFilterInput {
     type: StringQueryOperatorInput
 }
 
-input ContentfulWlTextContentFilterInput {
-    raw: StringQueryOperatorInput
-}
-
 input ContentfulWlTextFilterInput {
+    childContentfulWlTextContentRichTextNode: contentfulWlTextContentRichTextNodeFilterInput
     children: NodeFilterListInput
-    content: ContentfulWlTextContentFilterInput
+    childrenContentfulWlTextContentRichTextNode: contentfulWlTextContentRichTextNodeFilterListInput
+    content: contentfulWlTextContentRichTextNodeFilterInput
     contentful_id: StringQueryOperatorInput
     createdAt: DateQueryOperatorInput
     id: StringQueryOperatorInput
@@ -9374,9 +9518,7 @@ input SiteFunctionSortInput {
 }
 
 input SitePageContextFilterInput {
-    nextPostSlug: StringQueryOperatorInput
-    previousPostSlug: StringQueryOperatorInput
-    slug: StringQueryOperatorInput
+    name: StringQueryOperatorInput
 }
 
 input SitePageFilterInput {
@@ -9389,6 +9531,7 @@ input SitePageFilterInput {
     internalComponentName: StringQueryOperatorInput
     isCreatedByStatefulCreatePages: BooleanQueryOperatorInput
     matchPath: StringQueryOperatorInput
+    mode: StringQueryOperatorInput
     parent: NodeFilterInput
     path: StringQueryOperatorInput
     pluginCreator: SitePluginFilterInput
@@ -9435,7 +9578,6 @@ input SitePluginPackageJsonDevDependenciesFilterListInput {
 }
 
 input SitePluginPackageJsonFilterInput {
-    author: StringQueryOperatorInput
     dependencies: SitePluginPackageJsonDependenciesFilterListInput
     description: StringQueryOperatorInput
     devDependencies: SitePluginPackageJsonDevDependenciesFilterListInput
@@ -9459,22 +9601,15 @@ input SitePluginPackageJsonPeerDependenciesFilterListInput {
 input SitePluginPluginOptionsFilterInput {
     accessToken: StringQueryOperatorInput
     allExtensions: BooleanQueryOperatorInput
-    assetDownloadWorkers: IntQueryOperatorInput
     base64Width: IntQueryOperatorInput
     defaultQuality: IntQueryOperatorInput
-    downloadLocal: BooleanQueryOperatorInput
-    environment: StringQueryOperatorInput
     failOnError: BooleanQueryOperatorInput
-    forceFullSync: BooleanQueryOperatorInput
-    host: StringQueryOperatorInput
     isTSX: BooleanQueryOperatorInput
     jsxPragma: StringQueryOperatorInput
-    pageLimit: IntQueryOperatorInput
     path: StringQueryOperatorInput
     pathCheck: BooleanQueryOperatorInput
     spaceId: StringQueryOperatorInput
     stripMetadata: BooleanQueryOperatorInput
-    useNameForId: BooleanQueryOperatorInput
 }
 
 input SitePluginSortInput {
@@ -9583,6 +9718,30 @@ input contentfulPersonShortBioTextNodeSortInput {
 }
 
 input contentfulPersonShortBioTextNodeSysFilterInput {
+    type: StringQueryOperatorInput
+}
+
+input contentfulWlTextContentRichTextNodeFilterInput {
+    children: NodeFilterListInput
+    content: StringQueryOperatorInput
+    id: StringQueryOperatorInput
+    internal: InternalFilterInput
+    json: JSONQueryOperatorInput
+    nodeType: StringQueryOperatorInput
+    parent: NodeFilterInput
+    sys: contentfulWlTextContentRichTextNodeSysFilterInput
+}
+
+input contentfulWlTextContentRichTextNodeFilterListInput {
+    elemMatch: contentfulWlTextContentRichTextNodeFilterInput
+}
+
+input contentfulWlTextContentRichTextNodeSortInput {
+    fields: [contentfulWlTextContentRichTextNodeFieldsEnum]
+    order: [SortOrderEnum] = [ASC]
+}
+
+input contentfulWlTextContentRichTextNodeSysFilterInput {
     type: StringQueryOperatorInput
 }
 

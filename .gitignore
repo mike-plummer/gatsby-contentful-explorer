@@ -1,5 +1,5 @@
 # Generated GraphQL TS typings
-graphql-types.ts
+/src/__generated__/
 
 # IDE Files
 .idea

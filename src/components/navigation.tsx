@@ -1,13 +1,12 @@
 import React from 'react'
 import { graphql, Link, useStaticQuery } from 'gatsby'
-import { NavigationQuery } from '../../graphql-types';
-import * as styles from './navigation.module.css'
+import * as styles from './navigation.module.scss'
 
 interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = () => {
-  const data: NavigationQuery = useStaticQuery(
+  const data: GatsbyTypes.NavigationQuery = useStaticQuery<GatsbyTypes.NavigationQuery>(
     graphql`
         query Navigation {
             contentfulWlMenu(name: { eq: "Main Menu" }) {
@@ -36,11 +35,16 @@ const Navigation: React.FC<NavigationProps> = () => {
       <ul className={styles.navigation}>
         {data.contentfulWlMenu?.submenus?.map((submenu) => (
           <li key={submenu!.name} className={styles.navigationItem}>
-            {submenu?.entries?.map((entry) => (
-              <Link key={entry!.name} to={entry!.link!.slug!} activeClassName="active">
-                {entry!.displayName}
-              </Link>
-            ))}
+            {submenu!.name}
+            <ul>
+              {submenu?.entries?.map((entry) => (
+                <li key={entry!.name}>
+                  <Link to={entry!.link!.slug!} activeClassName="active">
+                    {entry!.displayName}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

@@ -2,11 +2,10 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import Layout from '../components/layout'
 
-import { WlPageByNameQuery } from '../../graphql-types'
 import Container from '../components/container';
 
 interface WLPageProps {
-  data: WlPageByNameQuery;
+  data: GatsbyTypes.WLPageByNameQuery;
 }
 
 const WLPage: React.FC<WLPageProps> = ({ data }) => {

@@ -9,24 +9,29 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "framer-motion": "^4.1.17",
-    "gatsby": "^3.10.1",
-    "gatsby-plugin-graphql-codegen": "^3.0.0",
-    "gatsby-plugin-image": "^1.10.1",
-    "gatsby-plugin-react-helmet": "^4.10.0",
-    "gatsby-plugin-sharp": "^3.10.2",
-    "gatsby-source-contentful": "^5.10.0",
-    "gatsby-transformer-remark": "^4.7.0",
-    "gatsby-transformer-sharp": "^3.10.0",
+    "gatsby": "next",
+    "gatsby-plugin-image": "next",
+    "gatsby-plugin-react-helmet": "next",
+    "gatsby-plugin-sass": "next",
+    "gatsby-plugin-sharp": "next",
+    "gatsby-plugin-typegen": "^2.2.4",
+    "gatsby-source-contentful": "next",
+    "gatsby-transformer-remark": "next",
+    "gatsby-transformer-sharp": "next",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-helmet": "^6.1.0"
+    "react-helmet": "^6.1.0",
+    "sass": "^1.42.1"
   },
   "devDependencies": {
+    "@types/node": "^16.10.1",
+    "@types/react": "^17.0.24",
+    "@types/react-dom": "^17.0.9",
     "@types/react-helmet": "^6.1.2",
     "contentful-import": "^7.8.6"
   },
   "engines": {
-    "node": ">=10.13.0"
+    "node": ">=16.9.1"
   },
   "license": "MIT",
   "main": "n/a",
